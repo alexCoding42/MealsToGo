@@ -4,8 +4,8 @@ import { SvgXml } from "react-native-svg";
 
 import { Spacer } from "../../../components/spacer/spacer.component";
 import { Text } from "../../../components/typography/text.component";
-import star from "../../../../assets/star";
-import open from "../../../../assets/open";
+import { star } from "../../../../assets/star";
+import { open } from "../../../../assets/open";
 
 import {
   Address,
@@ -17,18 +17,11 @@ import {
   Section,
   SectionEnd,
 } from "./restaurant-info-card.styles";
+import { IRestaurant } from "../../../interfaces";
 
-type RestaurantInfoCardProps = {
-  restaurant?: {
-    name?: string;
-    icon?: string;
-    photos?: string[];
-    address?: string;
-    isOpenNow?: boolean;
-    rating?: number;
-    isClosedTemporarily?: boolean;
-  };
-};
+export interface RestaurantInfoCardProps {
+  restaurant?: IRestaurant;
+}
 
 export const RestaurantInfoCard = ({
   restaurant = {},
