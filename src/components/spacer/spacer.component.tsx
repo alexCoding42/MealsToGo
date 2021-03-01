@@ -1,28 +1,28 @@
 import React from "react";
 import styled, { useTheme } from "styled-components/native";
 
-interface ISpacerProps {
+type SpacerProps = {
   position: string;
   size: string;
   children: React.ReactNode;
   theme?: string;
-}
+};
 
-type SizeVariantOptions = {
+type SizeVariantProps = {
   [key: string]: number;
 };
 
-type PositionVariantOptions = {
+type PositionVariantProps = {
   [key: string]: string;
 };
 
-const sizeVariant: SizeVariantOptions = {
+const sizeVariant: SizeVariantProps = {
   small: 1,
   medium: 2,
   large: 3,
 };
 
-const positionVariant: PositionVariantOptions = {
+const positionVariant: PositionVariantProps = {
   top: "marginTop",
   left: "marginLeft",
   right: "marginRight",
@@ -36,11 +36,11 @@ const getVariant = (position: string, size: string, theme: any) => {
   return `${property}:${value}`;
 };
 
-const SpacerView = styled.View`
+const SpacerView = styled.View<any>`
   ${({ variant }) => variant};
 `;
 
-export const Spacer = ({ position, size, children }: ISpacerProps) => {
+export const Spacer = ({ position, size, children }: SpacerProps) => {
   const theme = useTheme();
   const variant = getVariant(position, size, theme);
   return <SpacerView variant={variant}>{children}</SpacerView>;
