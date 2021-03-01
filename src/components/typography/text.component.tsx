@@ -44,7 +44,11 @@ const variants: any = {
   hint,
 };
 
-export const Text = styled.Text`
+type TextProps = {
+  variant: string;
+};
+
+export const Text = styled.Text<TextProps>`
   ${({ theme }) => defaultTextStyles(theme)}
   ${({ variant = "body", theme }) => variants[variant](theme)}
 `;
