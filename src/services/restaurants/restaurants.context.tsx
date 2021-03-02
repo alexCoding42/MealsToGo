@@ -1,17 +1,11 @@
-import React, {
-  useState,
-  createContext,
-  useEffect,
-  useMemo,
-  useContext,
-} from 'react';
+import React, { useState, createContext, useEffect, useContext } from "react";
 
 import {
   restaurantsRequest,
   restaurantsTransform,
-} from './restaurants.service';
+} from "./restaurants.service";
 
-import { LocationContext } from '../location/location.context';
+import { LocationContext } from "../location/location.context";
 
 interface RestaurantsContext {
   restaurants?: any;
@@ -32,7 +26,7 @@ export const RestaurantsContextProvider = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const { location = '' } = useContext(LocationContext);
+  const { location = "" } = useContext(LocationContext);
 
   const retrieveRestaurants = (restaurantLocation: string) => {
     setIsLoading(true);

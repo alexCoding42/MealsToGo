@@ -6,6 +6,7 @@ export interface IRestaurant {
   isOpenNow?: boolean;
   rating?: number;
   isClosedTemporarily?: boolean;
+  placeId?: string;
 }
 
 export interface ILocation {

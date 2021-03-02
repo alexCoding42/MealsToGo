@@ -28,7 +28,7 @@ const LoadingContainer = styled.View`
 `;
 
 export const RestaurantsScreen = () => {
-  const { isLoading, error, restaurants } = useContext<any>(RestaurantsContext);
+  const { isLoading, restaurants } = useContext<any>(RestaurantsContext);
 
   return (
     <SafeArea>
