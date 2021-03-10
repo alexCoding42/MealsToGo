@@ -18,6 +18,15 @@ export const AuthenticationContextProvider = ({
   const [user, setUser] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
 
+  firebase.auth().onAuthStateChanged((usr) => {
+    if (usr) {
+      setUser(usr);
+      setIsLoading(false);
+    } else {
+      setIsLoading(false);
+    }
+  });
+
   const onLogin = (email: string, password: string) => {
     setIsLoading(true);
     loginRequest(email, password)
@@ -54,6 +63,16 @@ export const AuthenticationContextProvider = ({
       });
   };
 
+  const onLogout = () => {
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        setUser(null);
+        setError(null);
+      });
+  };
+
   return (
     <AuthenticationContext.Provider
       value={{
@@ -63,6 +82,7 @@ export const AuthenticationContextProvider = ({
         error,
         onLogin,
         onRegister,
+        onLogout,
       }}
     >
       {children}
