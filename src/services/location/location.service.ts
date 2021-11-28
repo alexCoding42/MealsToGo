@@ -2,17 +2,7 @@
 import camelize from "camelize";
 import { ILocation } from "../../interfaces";
 
-import { locations } from "./locations.mock";
-
-export const locationRequest = (searchTerm: string) => {
-  return new Promise((resolve, reject) => {
-    const locationMock = locations[searchTerm];
-    if (!locationMock) {
-      reject("not found");
-    }
-    resolve(locationMock);
-  });
-};
+export const locationRequest = (searchTerm: string) => {};
 
 export const locationTransform = (result: ILocation | unknown) => {
   const formattedResponse = camelize(result);
