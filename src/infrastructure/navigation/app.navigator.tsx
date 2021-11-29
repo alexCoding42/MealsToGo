@@ -10,8 +10,8 @@ import { RestaurantsNavigator } from "./restaurants.navigator";
 import { MapScreen } from "../../features/map/screens/map.screen";
 import { SettingsNavigator } from "./settings.navigator";
 
-import { RestaurantsContextProvider } from "../../services/restaurants/restaurants.context";
-import { LocationContextProvider } from "../../services/location/location.context";
+import { RestaurantsProvider } from "../../services/restaurants/restaurants.context";
+import { LocationProvider } from "../../services/location/location.context";
 import { FavouritesContextProvider } from "../../services/favourites/favourites.context";
 import { colors } from "../theme/colors";
 
@@ -40,8 +40,8 @@ const createScreenOptions = ({ route }) => {
 
 export const AppNavigator = () => (
   <FavouritesContextProvider>
-    <LocationContextProvider>
-      <RestaurantsContextProvider>
+    <LocationProvider>
+      <RestaurantsProvider>
         <Tab.Navigator
           screenOptions={createScreenOptions}
           tabBarOptions={{
@@ -53,7 +53,7 @@ export const AppNavigator = () => (
           <Tab.Screen name="Map" component={MapScreen} />
           <Tab.Screen name="Settings" component={SettingsNavigator} />
         </Tab.Navigator>
-      </RestaurantsContextProvider>
-    </LocationContextProvider>
+      </RestaurantsProvider>
+    </LocationProvider>
   </FavouritesContextProvider>
 );
