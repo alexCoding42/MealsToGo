@@ -8,7 +8,7 @@ import { SafeArea } from "../../../components/utility/safe-area.component";
 import { Spacer } from "../../../components/spacer/spacer.component";
 import { FavouritesBar } from "../../../components/favourites/favourites-bar.component";
 
-import { RestaurantsContext } from "../../../services/restaurants/restaurants.context";
+import { useRestaurants } from "../../../services/restaurants/restaurants.context";
 import { FavouritesContext } from "../../../services/favourites/favourites.context";
 
 import { Search } from "../components/search.component";
@@ -27,7 +27,7 @@ const LoadingContainer = styled.View`
 `;
 
 export const RestaurantsScreen = ({ navigation }) => {
-  const { isLoading, restaurants } = useContext<any>(RestaurantsContext);
+  const { isLoading, restaurants } = useRestaurants();
   const { favourites } = useContext<any>(FavouritesContext);
   const [isToggled, setIsToggled] = useState<boolean>(false);
 
