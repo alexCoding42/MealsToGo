@@ -1,4 +1,3 @@
-// @ts-ignore
 import camelize from "camelize";
 import { host } from "../../utils/env";
 
