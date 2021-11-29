@@ -1,18 +1,14 @@
 // @ts-ignore
 import camelize from "camelize";
+import { host } from "../../utils/env";
 import { MockProps, RestaurantProps } from "./types";
 
 export const restaurantsRequest = async (
   location: string
 ): Promise<MockProps> => {
-  return fetch(
-    `http://localhost:5001/mealstogo-6e31e/us-central1/placesNearby?location=${location}`
-  ).then((res) => {
-    return res.json();
-  });
-  // const url = `${host}/placesNearby?location=${location}&mock=${isMock}`;
-  // const res = await fetch(url);
-  // return res.json();
+  const url = `${host}/placesNearby?location=${location}`;
+  const res = await fetch(url);
+  return res.json();
 };
 export const restaurantsTransform = ({
   results = [],
