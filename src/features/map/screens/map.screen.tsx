@@ -1,18 +1,29 @@
 import React, { useState, useEffect } from "react";
-import MapView from "react-native-maps";
-import styled from "styled-components/native";
+import { Marker, Callout } from "react-native-maps";
+import { CompositeNavigationProp } from "@react-navigation/native";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { StackNavigationProp } from "@react-navigation/stack";
 
-import { Search } from "../components/search.component";
-import { MapCallout } from "../components/map-callout.component";
+import Search from "../components/search.component";
+import MapCallout from "../components/map-callout.component";
+
 import { useLocation } from "../../../services/location/location.context";
 import { useRestaurants } from "../../../services/restaurants/restaurants.context";
+import { RootBottomParamList } from "../../../infrastructure/navigation/app.navigator";
+import { RootStackParamList } from "../../../infrastructure/navigation/restaurants.navigator";
 
-const Map = styled(MapView)`
-  height: 100%;
-  width: 100%;
-`;
+import Map from "./map.styles";
 
-export const MapScreen = ({ navigation }) => {
+type MapScreenNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<RootBottomParamList, "Map">,
+  StackNavigationProp<RootStackParamList>
+>;
+
+type Props = {
+  navigation: MapScreenNavigationProp;
+};
+
+const RestaurantMap = ({ navigation }: Props): JSX.Element => {
   const { location } = useLocation();
   const { restaurants = [] } = useRestaurants();
 
@@ -35,12 +46,12 @@ export const MapScreen = ({ navigation }) => {
           latitude: lat,
           longitude: lng,
           latitudeDelta: latDelta,
-          longitudeDelta: 0.02,
+          longitudeDelta: 0.01,
         }}
       >
         {restaurants.map((restaurant) => {
           return (
-            <MapView.Marker
+            <Marker
               key={restaurant.name}
               title={restaurant.name}
               coordinate={{
@@ -48,7 +59,7 @@ export const MapScreen = ({ navigation }) => {
                 longitude: restaurant.geometry.location.lng,
               }}
             >
-              <MapView.Callout
+              <Callout
                 onPress={() =>
                   navigation.navigate("RestaurantDetail", {
                     restaurant,
@@ -56,11 +67,30 @@ export const MapScreen = ({ navigation }) => {
                 }
               >
                 <MapCallout restaurant={restaurant} />
-              </MapView.Callout>
-            </MapView.Marker>
+              </Callout>
+            </Marker>
           );
         })}
       </Map>
     </>
   );
 };
+
+const MapScreen = ({ navigation }: Props): JSX.Element => {
+  const { location } = useLocation();
+  if (!location) {
+    return (
+      <Map
+        region={{
+          latitude: 0,
+          longitude: 0,
+          latitudeDelta: 0,
+          longitudeDelta: 0.02,
+        }}
+      />
+    );
+  }
+  return <RestaurantMap navigation={navigation} />;
+};
+
+export default MapScreen;

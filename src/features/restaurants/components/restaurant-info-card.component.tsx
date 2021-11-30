@@ -1,82 +1,80 @@
 import React from "react";
 
 import { SvgXml } from "react-native-svg";
-import { View } from "react-native";
+import { View, Image } from "react-native";
 
-import { Favourite } from "../../../components/favourites/favourite.component";
-import { Spacer } from "../../../components/spacer/spacer.component";
-import { Text } from "../../../components/typography/text.component";
+import Favourite from "../../../components/favourites/favourite.component";
+import Spacer from "../../../components/spacer/spacer.component";
+import Text from "../../../components/typography/text.component";
+
+import { RestaurantProps } from "../../../services/restaurants/types";
+
 import { star } from "../../../../assets/star";
 import { open } from "../../../../assets/open";
 
-import {
-  Address,
-  Icon,
-  Info,
-  Rating,
-  RestaurantCard,
-  RestaurantCardCover,
-  Section,
-  SectionEnd,
-} from "./restaurant-info-card.styles";
-import { IRestaurant } from "../../../interfaces";
+import * as S from "./restaurant-info-card.styles";
 
-export interface RestaurantInfoCardProps {
-  restaurant?: IRestaurant;
-}
+type RestaurantInfoCardProps = {
+  restaurant: RestaurantProps;
+};
 
-export const RestaurantInfoCard = ({
-  restaurant = {},
-}: RestaurantInfoCardProps) => {
+const RestaurantInfoCard = ({ restaurant }: RestaurantInfoCardProps) => {
   const {
-    name = "Some Restaurant",
-    icon = "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/lodging-71.png",
-    photos = [
-      "https://www.foodiesfeed.com/wp-content/uploads/2019/06/top-view-for-box-of-2-burgers-home-made-600x899.jpg",
-    ],
-    address = "100 some random street",
-    isOpenNow = true,
-    rating = 4,
-    isClosedTemporarily = true,
     placeId,
+    name,
+    photos,
+    rating = 0,
+    isClosedTemporarily,
+    isOpenNow,
+    businessStatus,
+    ix,
+    icon,
+    address,
   } = restaurant;
 
   const ratingArray = Array.from(new Array(Math.floor(rating)));
 
   return (
-    <RestaurantCard elevation={2}>
+    <S.RestaurantCard elevation={2}>
       <View>
         <Favourite restaurant={restaurant} />
-        <RestaurantCardCover key={name} source={{ uri: photos[0] }} />
+        <S.RestaurantCardCover key={name} source={{ uri: photos[0] }} />
       </View>
-
-      <Info>
+      <S.Info>
         <Text variant="label">{name}</Text>
-        <Section>
-          <Rating>
-            {ratingArray.map((_, index: number) => (
+        <S.Section>
+          <S.Rating>
+            {ratingArray.map((_, index) => (
               <SvgXml
-                key={`star-${placeId}-${index}`}
+                key={`star-${placeId + index}`}
                 xml={star}
                 width={20}
                 height={20}
               />
             ))}
-          </Rating>
-          <SectionEnd>
-            {isClosedTemporarily && (
+          </S.Rating>
+          <S.SectionEnd>
+            {isClosedTemporarily ? (
               <Text variant="error">CLOSED TEMPORARILY</Text>
+            ) : (
+              <Text variant="body">{businessStatus}</Text>
             )}
             <Spacer position="left" size="large">
               {isOpenNow && <SvgXml xml={open} width={20} height={20} />}
             </Spacer>
             <Spacer position="left" size="large">
-              <Icon source={{ uri: icon }} />
+              <Image
+                style={{ width: 15, height: 15 }}
+                source={{ uri: ix || icon }}
+              />
             </Spacer>
-          </SectionEnd>
-        </Section>
-        <Address>{address}</Address>
-      </Info>
-    </RestaurantCard>
+          </S.SectionEnd>
+        </S.Section>
+
+        <S.Address>{address}</S.Address>
+      </S.Info>
+    </S.RestaurantCard>
   );
 };
+
+export default RestaurantInfoCard;

@@ -5,25 +5,34 @@ import {
   TransitionPresets,
 } from "@react-navigation/stack";
 
-import { RestaurantsScreen } from "../../features/restaurants/screens/restaurants.screen";
-import { RestaurantDetailScreen } from "../../features/restaurants/screens/restaurant-detail.screen";
+import RestaurantsScreen from "../../features/restaurants/screens/restaurants.screen";
+import RestaurantDetailScreen from "../../features/restaurants/screens/restaurant-detail.screen";
 
-const RestaurantsStack = createStackNavigator();
+import { RestaurantProps } from "../../services/restaurants/types";
 
-export const RestaurantsNavigator = () => {
+export type RootStackParamList = {
+  Restaurants: undefined;
+  RestaurantDetail: { restaurant: RestaurantProps };
+};
+
+const RestaurantStack = createStackNavigator<RootStackParamList>();
+
+const RestaurantsNavigator = () => {
   return (
-    <RestaurantsStack.Navigator
+    <RestaurantStack.Navigator
       headerMode="none"
       screenOptions={{ ...TransitionPresets.ModalPresentationIOS }}
     >
-      <RestaurantsStack.Screen
+      <RestaurantStack.Screen
         name="Restaurants"
         component={RestaurantsScreen}
       />
-      <RestaurantsStack.Screen
+      <RestaurantStack.Screen
         name="RestaurantDetail"
         component={RestaurantDetailScreen}
       />
-    </RestaurantsStack.Navigator>
+    </RestaurantStack.Navigator>
   );
 };
+
+export default RestaurantsNavigator;

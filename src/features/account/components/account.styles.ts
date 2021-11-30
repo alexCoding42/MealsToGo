@@ -1,7 +1,7 @@
-import styled from "styled-components/native";
+/* eslint-disable global-require */
+import styled, { css } from "styled-components/native";
 import { Button, TextInput } from "react-native-paper";
-import { colors } from "../../../infrastructure/theme/colors";
-import { Text } from "../../../components/typography/text.component";
+import Text from "../../../components/typography/text.component";
 
 export const AccountBackground = styled.ImageBackground.attrs({
   source: require("../../../../assets/home_bg.jpeg"),
@@ -19,15 +19,19 @@ export const AccountCover = styled.View`
 `;
 
 export const AccountContainer = styled.View`
-  background-color: rgba(255, 255, 255, 0.7);
-  padding: ${(props) => props.theme.space[4]};
-  margin-top: ${(props) => props.theme.space[2]};
+  ${({ theme }) => css`
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: ${theme.space[4]};
+    margin-top: ${theme.space[2]};
+  `}
 `;
 
-export const AuthButton = styled(Button).attrs({
-  color: colors.brand.primary,
-})`
-  padding: ${(props) => props.theme.space[2]};
+export const AuthButton = styled(Button).attrs(({ theme }) => ({
+  color: theme.colors.brand.primary,
+}))`
+  ${({ theme }) => css`
+    padding: ${theme.space[2]};
+  `}
 `;
 
 export const AuthInput = styled(TextInput)`
@@ -39,17 +43,21 @@ export const Title = styled(Text)`
 `;
 
 export const ErrorContainer = styled.View`
-  max-width: 300px;
-  align-items: center;
-  align-self: center;
-  margin-top: ${(props) => props.theme.space[2]};
-  margin-bottom: ${(props) => props.theme.space[2]};
+  ${({ theme }) => css`
+    max-width: 300px;
+    align-items: center;
+    align-self: center;
+    margin-top: ${theme.space[2]};
+    margin-bottom: ${theme.space[2]};
+  `}
 `;
 
 export const AnimationWrapper = styled.View`
-  width: 100%;
-  height: 40%;
-  position: absolute;
-  top: 30px;
-  padding: ${(props) => props.theme.space[2]};
+  ${({ theme }) => css`
+    width: 100%;
+    height: 40%;
+    position: absolute;
+    top: 30px;
+    padding: ${theme.space[2]};
+  `}
 `;

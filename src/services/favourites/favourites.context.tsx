@@ -1,52 +1,59 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { AuthenticationContext } from "../../services/authentication/authentication.context";
+import { RestaurantProps } from "../restaurants/types";
+import { useAuth } from "../authentication/authentication.context";
 
-import { IRestaurant } from "../../interfaces";
+type Favorites = RestaurantProps;
 
-interface FavouritesContext {}
+type FavouritesContextData = {
+  favourites: Favorites[];
+  addToFavourites: (restaurant: RestaurantProps) => void;
+  removeFromFavourites: (restaurant: RestaurantProps) => void;
+};
 
-type FavouritesContextProviderProps = {
+type Props = {
   children: React.ReactNode;
 };
 
-export const FavouritesContext = createContext<FavouritesContext>({});
+const FavouritesContext = createContext<FavouritesContextData>(
+  {} as FavouritesContextData
+);
 
-export const FavouritesContextProvider = ({
-  children,
-}: FavouritesContextProviderProps) => {
-  const { user } = useContext(AuthenticationContext);
+const STORAGE_FAVOURITES = "@favourites";
 
-  const [favourites, setFavourites] = useState([]);
+export const FavouritesProvider = ({ children }: Props): JSX.Element => {
+  const { user } = useAuth();
 
-  const saveFavourites = async (value: unknown, uid: string) => {
+  const [favourites, setFavourites] = useState<Favorites[]>([]);
+
+  const saveFavourites = async (value: Favorites[], uid: string) => {
     try {
       const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem(`@favourites-${uid}`, jsonValue);
+      await AsyncStorage.setItem(`${STORAGE_FAVOURITES}-${uid}`, jsonValue);
     } catch (e) {
-      console.log("error storing", e);
+      console.error("error storing", e);
     }
   };
 
   const loadFavourites = async (uid: string) => {
     try {
-      const value = await AsyncStorage.getItem(`@favourites-${uid}`);
+      const value = await AsyncStorage.getItem(`${STORAGE_FAVOURITES}-${uid}`);
       if (value !== null) {
         setFavourites(JSON.parse(value));
       }
     } catch (e) {
-      console.log("error loading", e);
+      console.error("error loading", e);
     }
   };
 
-  const add = (restaurant: IRestaurant) => {
+  const add = (restaurant: RestaurantProps) => {
     setFavourites([...favourites, restaurant]);
   };
 
-  const remove = (restaurant: IRestaurant) => {
+  const remove = (restaurant: RestaurantProps) => {
     const newFavourites = favourites.filter(
-      (x: IRestaurant) => x.placeId !== restaurant.placeId
+      (favorite) => favorite.placeId !== restaurant.placeId
     );
 
     setFavourites(newFavourites);
@@ -76,3 +83,13 @@ export const FavouritesContextProvider = ({
     </FavouritesContext.Provider>
   );
 };
+
+export function useFavorite(): FavouritesContextData {
+  const context = useContext(FavouritesContext);
+
+  if (!context) {
+    throw new Error("useFavorite must be used within an FavoriteProvider");
+  }
+
+  return context;
+}

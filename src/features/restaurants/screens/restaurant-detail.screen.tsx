@@ -1,18 +1,39 @@
 import React, { useState } from "react";
 import { ScrollView } from "react-native";
 import { List, Divider } from "react-native-paper";
+import { RouteProp, CompositeNavigationProp } from "@react-navigation/native";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { StackNavigationProp } from "@react-navigation/stack";
 
-import { RestaurantInfoCard } from "../components/restaurant-info-card.component";
+import RestaurantInfoCard from "../components/restaurant-info-card.component";
 
-import { SafeArea } from "../../../components/utility/safe-area.component";
+import { RootBottomParamList } from "../../../infrastructure/navigation/app.navigator";
+import { RootStackParamList } from "../../../infrastructure/navigation/restaurants.navigator";
+import SafeArea from "../../../components/utility/safe-area.component";
 
-export const RestaurantDetailScreen = ({ route }) => {
-  const [breakfastExpanded, setBreakfastExpanded] = useState<boolean>(false);
-  const [lunchExpanded, setLunchExpanded] = useState<boolean>(false);
-  const [dinnerExpanded, setDinnerExpanded] = useState<boolean>(false);
-  const [drinksExpanded, setDrinksExpanded] = useState<boolean>(false);
+type RestaurantsScreenNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<RootBottomParamList, "Checkout">,
+  StackNavigationProp<RootStackParamList>
+>;
 
+type RestaurantDetailScreenRouteProp = RouteProp<
+  RootStackParamList,
+  "RestaurantDetail"
+>;
+
+type Props = {
+  navigation: RestaurantsScreenNavigationProp;
+  route: RestaurantDetailScreenRouteProp;
+};
+
+const RestaurantDetailScreen = ({ navigation, route }: Props): JSX.Element => {
   const { restaurant } = route.params;
+
+  const [breakfastExpanded, setBreakfastExpanded] = useState(false);
+  const [lunchExpanded, setLunchExpanded] = useState(false);
+  const [dinnerExpanded, setDinnerExpanded] = useState(false);
+  const [drinksExpanded, setDrinksExpanded] = useState(false);
+
   return (
     <SafeArea>
       <RestaurantInfoCard restaurant={restaurant} />
@@ -28,6 +49,7 @@ export const RestaurantDetailScreen = ({ route }) => {
           <List.Item title="Classic Breakfast" />
         </List.Accordion>
         <Divider />
+
         <List.Accordion
           title="Lunch"
           left={(props) => <List.Icon {...props} icon="hamburger" />}
@@ -39,9 +61,9 @@ export const RestaurantDetailScreen = ({ route }) => {
           <List.Item title="Steak Sandwich" />
           <Divider />
           <List.Item title="Mushroom Soup" />
-          <Divider />
         </List.Accordion>
         <Divider />
+
         <List.Accordion
           title="Dinner"
           left={(props) => <List.Icon {...props} icon="food-variant" />}
@@ -53,9 +75,9 @@ export const RestaurantDetailScreen = ({ route }) => {
           <List.Item title="Veal Cutlet with Chicken Mushroom Rotini" />
           <Divider />
           <List.Item title="Steak Frites" />
-          <Divider />
         </List.Accordion>
         <Divider />
+
         <List.Accordion
           title="Drinks"
           left={(props) => <List.Icon {...props} icon="cup" />}
@@ -76,3 +98,5 @@ export const RestaurantDetailScreen = ({ route }) => {
     </SafeArea>
   );
 };
+
+export default RestaurantDetailScreen;
