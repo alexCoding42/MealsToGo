@@ -1,10 +1,11 @@
 import React from "react";
 import { ScrollView, TouchableOpacity } from "react-native";
-import { Spacer } from "../../spacer/spacer.component";
-import { CompactRestaurantInfo } from "../../restaurant/compact-restaurant-info.component";
-import { Text } from "../../typography/text.component";
+import Spacer from "../../spacer/spacer.component";
+import CompactRestaurantInfo from "../../restaurant/compact-restaurant-info.component";
+import Text from "../../typography/text.component";
 import { RestaurantProps } from "../../../services/restaurants/types";
 import { FavouritesWrapper } from "./styles";
+import { RootStackParamList } from "../../../infrastructure/navigation/restaurants.navigator";
 
 type FavouritesBarProps = {
   favourites: RestaurantProps[];
@@ -21,7 +22,7 @@ const FavouritesBar = ({ favourites, onNavigate }: FavouritesBarProps) => {
 
   return (
     <FavouritesWrapper elevation={3}>
-      <Spacer variant="left.large">
+      <Spacer position="left" size="large">
         <Text variant="caption">Favourites</Text>
       </Spacer>
 

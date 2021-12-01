@@ -1,8 +1,10 @@
+const url = require("url");
 const functions = require("firebase-functions");
+
 const { locations: locationsMock } = require("./geocode.mock");
 
 module.exports.geocodeRequest = (request, response, client) => {
-  const { city, mock } = request.query;
+  const { city, mock } = url.parse(request.url, true).query;
   if (mock === "true") {
     const locationMock = locationsMock[city.toLowerCase()];
     return response.json(locationMock);

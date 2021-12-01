@@ -1,9 +1,9 @@
 import React, { useState, createContext, useCallback, useContext } from "react";
-import firebase, { User } from "firebase";
+import firebase, { User, auth } from "firebase";
 
 import { loginRequest } from "./authentication.service";
 
-export type UserProps = User;
+export type UserProps = User | auth.UserCredential;
 
 type AuthenticationContextData = {
   isAuthenticated: boolean;

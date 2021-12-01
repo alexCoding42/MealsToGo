@@ -4,7 +4,6 @@ import {
   restaurantsRequest,
   restaurantsTransform,
 } from "./restaurants.service";
-
 import { useLocation } from "../location/location.context";
 
 type RestaurantsContextData = {
@@ -21,7 +20,7 @@ const RestaurantsContext = createContext<RestaurantsContextData>(
   {} as RestaurantsContextData
 );
 
-export const RestaurantsProvider = ({ children }: Props) => {
+export const RestaurantsProvider = ({ children }: Props): JSX.Element => {
   const [restaurants, setRestaurants] = useState<RestaurantProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -31,13 +30,16 @@ export const RestaurantsProvider = ({ children }: Props) => {
   const retrieveRestaurants = (loc: string) => {
     setIsLoading(true);
     setRestaurants([]);
+
     restaurantsRequest(loc)
       .then(restaurantsTransform)
       .then((results) => {
+        setError("");
         setIsLoading(false);
         setRestaurants(results);
       })
       .catch((err) => {
+        setRestaurants([]);
         setIsLoading(false);
         setError(err);
       });

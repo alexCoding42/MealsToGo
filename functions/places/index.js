@@ -1,4 +1,6 @@
+const url = require("url");
 const functions = require("firebase-functions");
+
 const { mocks, addMockImage } = require("./mock");
 
 const addGoogleImage = (restaurant) => {
@@ -19,7 +21,7 @@ const addGoogleImage = (restaurant) => {
 };
 
 module.exports.placesRequest = (request, response, client) => {
-  const { location, mock } = request.query;
+  const { location, mock } = url.parse(request.url, true).query;
   if (mock === "true") {
     const data = mocks[location];
     if (data) {

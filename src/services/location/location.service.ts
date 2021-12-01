@@ -42,7 +42,6 @@ export const locationRequest = async (
 ): Promise<LocationReq> => {
   const url = `${host}/geocode?city=${searchTerm}&mock=${isMock}`;
   const res = await fetch(url);
-  console.log(res);
   return res.json();
 };
 

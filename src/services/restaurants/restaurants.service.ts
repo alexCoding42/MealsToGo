@@ -7,7 +7,6 @@ export const restaurantsRequest = async (
 ): Promise<MockProps> => {
   const url = `${host}/placesNearby?location=${location}&mock=${isMock}`;
   const res = await fetch(url);
-  console.log(res);
   return res.json();
 };
 export const restaurantsTransform = ({

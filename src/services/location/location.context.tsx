@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { useState, useEffect, createContext, useContext } from "react";
 
 import {
-  LocationProps,
   locationRequest,
   locationTransform,
+  LocationProps,
 } from "./location.service";
 
 interface LocationContextData {
