@@ -1,5 +1,5 @@
 import camelize from "camelize";
-import { host } from "../../utils/env";
+import { host, isMock } from "../../utils/env";
 
 type LocationReq = {
   results: {
@@ -40,8 +40,9 @@ export type LocationProps = {
 export const locationRequest = async (
   searchTerm: string
 ): Promise<LocationReq> => {
-  const url = `${host}/geocode?city=${searchTerm}`;
+  const url = `${host}/geocode?city=${searchTerm}&mock=${isMock}`;
   const res = await fetch(url);
+  console.log(res);
   return res.json();
 };
 

@@ -74,18 +74,18 @@ const RestaurantsScreen = ({
           onNavigate={navigation.navigate}
         />
       )}
-      {/* {hasError && (
+      {hasError && (
         <Spacer position="left" size="large">
           <Text variant="error">Something went wrong retrieving the data</Text>
         </Spacer>
-      )} */}
-      {/* {!hasError && ( */}
-      <S.RestaurantList
-        data={restaurants}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
-      />
-      {/* )} */}
+      )}
+      {!hasError && (
+        <S.RestaurantList
+          data={restaurants}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
+        />
+      )}
     </SafeArea>
   );
 };
