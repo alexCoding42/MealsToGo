@@ -1,81 +1,90 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { ActivityIndicator, Colors } from "react-native-paper";
-import {
-  AccountBackground,
-  AccountCover,
-  AccountContainer,
-  AuthButton,
-  AuthInput,
-  ErrorContainer,
-  Title,
-} from "../components/account.styles";
-import { Text } from "../../../components/typography/text.component";
-import { Spacer } from "../../../components/spacer/spacer.component";
-import { AuthenticationContext } from "../../../services/authentication/authentication.context";
+import { StackNavigationProp } from "@react-navigation/stack";
 
-export const RegisterScreen = ({ navigation }) => {
+import { RootStackParamList } from "../../../infrastructure/navigation/account.navigator";
+import { useAuth } from "../../../services/authentication/authentication.context";
+
+import Text from "../../../components/typography/text.component";
+import Spacer from "../../../components/spacer/spacer.component";
+
+import * as S from "../components/account.styles";
+
+type RegisterScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "Main"
+>;
+
+type RegisterScreenProps = {
+  navigation: RegisterScreenNavigationProp;
+};
+
+const RegisterScreen = ({ navigation }: RegisterScreenProps): JSX.Element => {
+  const { onRegister, error, isLoading } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeatedPassword, setRepeatedPassword] = useState("");
-  const { onRegister, error, isLoading } = useContext(AuthenticationContext);
 
   return (
-    <AccountBackground>
-      <AccountCover />
-      <Title>Meals To Go</Title>
-      <AccountContainer>
-        <AuthInput
+    <S.AccountBackground>
+      <S.AccountCover />
+      <S.Title>Meals To Go</S.Title>
+      <S.AccountContainer>
+        <S.AuthInput
           label="E-mail"
           value={email}
           textContentType="emailAddress"
           keyboardType="email-address"
           autoCapitalize="none"
-          onChangeText={(u) => setEmail(u)}
+          onChangeText={setEmail}
         />
         <Spacer size="large">
-          <AuthInput
+          <S.AuthInput
             label="Password"
             value={password}
             textContentType="password"
             secureTextEntry
             autoCapitalize="none"
-            onChangeText={(p) => setPassword(p)}
+            onChangeText={setPassword}
           />
         </Spacer>
         <Spacer size="large">
-          <AuthInput
+          <S.AuthInput
             label="Repeat Password"
             value={repeatedPassword}
             textContentType="password"
             secureTextEntry
             autoCapitalize="none"
-            onChangeText={(p) => setRepeatedPassword(p)}
+            onChangeText={setRepeatedPassword}
           />
         </Spacer>
-        {error && (
-          <ErrorContainer size="large">
+        {!!error && (
+          <S.ErrorContainer>
             <Text variant="error">{error}</Text>
-          </ErrorContainer>
+          </S.ErrorContainer>
         )}
         <Spacer size="large">
           {!isLoading ? (
-            <AuthButton
+            <S.AuthButton
               icon="email"
               mode="contained"
               onPress={() => onRegister(email, password, repeatedPassword)}
             >
               Register
-            </AuthButton>
+            </S.AuthButton>
           ) : (
-            <ActivityIndicator animating={true} color={Colors.blue300} />
+            <ActivityIndicator animating color={Colors.blue300} />
           )}
         </Spacer>
-      </AccountContainer>
+      </S.AccountContainer>
       <Spacer size="large">
-        <AuthButton mode="contained" onPress={() => navigation.goBack()}>
+        <S.AuthButton mode="contained" onPress={() => navigation.goBack()}>
           Back
-        </AuthButton>
+        </S.AuthButton>
       </Spacer>
-    </AccountBackground>
+    </S.AccountBackground>
   );
 };
+
+export default RegisterScreen;

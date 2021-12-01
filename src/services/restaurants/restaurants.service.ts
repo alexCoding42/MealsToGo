@@ -1,12 +1,11 @@
-// @ts-ignore
 import camelize from "camelize";
-import { host } from "../../utils/env";
+import { host, isMock } from "../../utils/env";
 import { MockProps, RestaurantProps } from "./types";
 
 export const restaurantsRequest = async (
   location: string
 ): Promise<MockProps> => {
-  const url = `${host}/placesNearby?location=${location}`;
+  const url = `${host}/placesNearby?location=${location}&mock=${isMock}`;
   const res = await fetch(url);
   return res.json();
 };

@@ -1,31 +1,33 @@
 import React from "react";
 import { ScrollView, TouchableOpacity } from "react-native";
-import { Card } from "react-native-paper";
-import styled from "styled-components/native";
-import { IRestaurant } from "../../interfaces";
-import { Spacer } from "../spacer/spacer.component";
-import { CompactRestaurantInfo } from "../restaurant/compact-restaurant-info.component";
-import { Text } from "../typography/text.component";
+import Spacer from "../../spacer/spacer.component";
+import CompactRestaurantInfo from "../../restaurant/compact-restaurant-info.component";
+import Text from "../../typography/text.component";
+import { RestaurantProps } from "../../../services/restaurants/types";
+import { FavouritesWrapper } from "./styles";
+import { RootStackParamList } from "../../../infrastructure/navigation/restaurants.navigator";
 
-const FavouritesWrapper = styled(Card)`
-  padding: 10px;
-  z-index: 999;
-  border-radius: 15px;
-`;
+type FavouritesBarProps = {
+  favourites: RestaurantProps[];
+  onNavigate: (
+    key: string,
+    params?: RootStackParamList["RestaurantDetail"]
+  ) => void;
+};
 
-export const FavouritesBar = ({ favourites, onNavigate }) => {
+const FavouritesBar = ({ favourites, onNavigate }: FavouritesBarProps) => {
   if (!favourites.length) {
     return null;
   }
 
   return (
     <FavouritesWrapper elevation={3}>
-      <Spacer variant="left.large">
+      <Spacer position="left" size="large">
         <Text variant="caption">Favourites</Text>
       </Spacer>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {favourites.map((restaurant: IRestaurant) => {
+        {favourites.map((restaurant) => {
           const key = restaurant.name;
           return (
             <Spacer key={key} position="left" size="medium">
@@ -45,3 +47,5 @@ export const FavouritesBar = ({ favourites, onNavigate }) => {
     </FavouritesWrapper>
   );
 };
+
+export default FavouritesBar;

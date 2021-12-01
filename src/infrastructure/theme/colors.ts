@@ -25,4 +25,4 @@ export const colors = {
     error: "#D0421B",
     success: "#138000",
   },
-};
+} as const;

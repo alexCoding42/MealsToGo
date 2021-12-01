@@ -1,10 +1,6 @@
-import styled from "styled-components/native";
+import styled, { DefaultTheme } from "styled-components/native";
 
-type Theme = {
-  [key: string]: any;
-};
-
-const defaultTextStyles = (theme: Theme) => `
+const defaultTextStyles = (theme: DefaultTheme) => `
   font-family: ${theme.fonts.body};
   font-weight: ${theme.fontWeights.regular};
   color: ${theme.colors.text.primary};
@@ -13,30 +9,30 @@ const defaultTextStyles = (theme: Theme) => `
   margin-bottom: 0px;
 `;
 
-const body = (theme: Theme) => `
+const body = (theme: DefaultTheme) => `
     font-size: ${theme.fontSizes.body};
 `;
 
-const hint = (theme: Theme) => `
+const hint = (theme: DefaultTheme) => `
     font-size: ${theme.fontSizes.body};
 `;
 
-const error = (theme: Theme) => `
+const error = (theme: DefaultTheme) => `
     color: ${theme.colors.text.error};
 `;
 
-const caption = (theme: Theme) => `
+const caption = (theme: DefaultTheme) => `
     font-size: ${theme.fontSizes.caption};
     font-weight: ${theme.fontWeights.bold};
 `;
 
-const label = (theme: Theme) => `
+const label = (theme: DefaultTheme) => `
     font-family: ${theme.fonts.heading};
     font-size: ${theme.fontSizes.body};
     font-weight: ${theme.fontWeights.medium};
 `;
 
-const variants: any = {
+const variants = {
   body,
   label,
   caption,
@@ -45,10 +41,12 @@ const variants: any = {
 };
 
 type TextProps = {
-  variant: string;
+  variant?: keyof typeof variants;
 };
 
-export const Text = styled.Text<TextProps>`
+const Text = styled.Text<TextProps>`
   ${({ theme }) => defaultTextStyles(theme)}
   ${({ variant = "body", theme }) => variants[variant](theme)}
 `;
+
+export default Text;

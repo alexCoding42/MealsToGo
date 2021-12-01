@@ -12,7 +12,7 @@ const SearchContainer = styled.View`
   width: 100%;
 `;
 
-export const Search = () => {
+const Search = () => {
   const { keyword, search } = useLocation();
   const [searchKeyword, setSearchKeyword] = useState(keyword);
 
@@ -36,3 +36,5 @@ export const Search = () => {
     </SearchContainer>
   );
 };
+
+export default Search;

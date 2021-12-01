@@ -1,7 +1,13 @@
 import React from "react";
+import CompactRestaurantInfo from "../../../components/restaurant/compact-restaurant-info.component";
+import { RestaurantProps } from "../../../services/restaurants/types";
 
-import { CompactRestaurantInfo } from "../../../components/restaurant/compact-restaurant-info.component";
+type MapCallout = {
+  restaurant: RestaurantProps;
+};
 
-export const MapCallout = ({ restaurant }) => (
+const MapCallout = ({ restaurant }: MapCallout) => (
   <CompactRestaurantInfo isMap restaurant={restaurant} />
 );
+
+export default MapCallout;

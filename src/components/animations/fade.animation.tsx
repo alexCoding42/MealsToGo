@@ -1,7 +1,12 @@
 import React, { useRef, useEffect } from "react";
 import { Animated } from "react-native";
 
-export const FadeInView = ({ duration = 1500, ...props }) => {
+type Props = {
+  duration?: number;
+  children: React.ReactNode;
+};
+
+const FadeInView = ({ duration = 1500, children }: Props) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -15,11 +20,12 @@ export const FadeInView = ({ duration = 1500, ...props }) => {
   return (
     <Animated.View // Special animatable View
       style={{
-        ...props.style,
         opacity: fadeAnim, // Bind opacity to animated value
       }}
     >
-      {props.children}
+      {children}
     </Animated.View>
   );
 };
+
+export default FadeInView;
