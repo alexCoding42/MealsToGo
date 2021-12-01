@@ -1,23 +1,21 @@
-import React, { useContext } from "react";
-import styled from "styled-components/native";
+import React, { useMemo } from "react";
 import { AntDesign } from "@expo/vector-icons";
-import { TouchableOpacity } from "react-native";
+import { RestaurantProps } from "../../services/restaurants/types";
 
-import { FavouritesContext } from "../../services/favourites/favourites.context";
+import { useFavorite } from "../../services/favourites/favourites.context";
 
-const FavouriteButton = styled(TouchableOpacity)`
-  position: absolute;
-  top: 25px;
-  right: 25px;
-  z-index: 9;
-`;
+import { FavouriteButton } from "./favourites.styles";
 
-export const Favourite = ({ restaurant }) => {
-  const { favourites, addToFavourites, removeFromFavourites } = useContext(
-    FavouritesContext
-  );
+type FavouriteProps = {
+  restaurant: RestaurantProps;
+};
 
-  const isFavourite = favourites.find((r) => r.placeId === restaurant.placeId);
+const Favourite = ({ restaurant }: FavouriteProps) => {
+  const { favourites, addToFavourites, removeFromFavourites } = useFavorite();
+
+  const isFavourite = useMemo(() => {
+    return favourites.find((r) => r.placeId === restaurant.placeId);
+  }, [favourites, restaurant.placeId]);
 
   return (
     <FavouriteButton
@@ -35,3 +33,5 @@ export const Favourite = ({ restaurant }) => {
     </FavouriteButton>
   );
 };
+
+export default Favourite;

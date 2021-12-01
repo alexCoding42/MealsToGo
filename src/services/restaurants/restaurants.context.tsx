@@ -1,48 +1,48 @@
 import React, { useState, createContext, useEffect, useContext } from "react";
-
+import { RestaurantProps } from "./types";
 import {
   restaurantsRequest,
   restaurantsTransform,
 } from "./restaurants.service";
+import { useLocation } from "../location/location.context";
 
-import { LocationContext } from "../location/location.context";
+type RestaurantsContextData = {
+  restaurants: RestaurantProps[];
+  isLoading: boolean;
+  error: string;
+};
 
-interface RestaurantsContext {
-  restaurants?: any;
-  isLoading?: boolean;
-  error?: string;
-}
-
-type RestaurantsContextProviderProps = {
+type Props = {
   children: React.ReactNode;
 };
 
-export const RestaurantsContext = createContext<RestaurantsContext>({});
+const RestaurantsContext = createContext<RestaurantsContextData>(
+  {} as RestaurantsContextData
+);
 
-export const RestaurantsContextProvider = ({
-  children,
-}: RestaurantsContextProviderProps) => {
-  const [restaurants, setRestaurants] = useState([]);
+export const RestaurantsProvider = ({ children }: Props): JSX.Element => {
+  const [restaurants, setRestaurants] = useState<RestaurantProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
-  const { location = "" } = useContext(LocationContext);
+  const { location } = useLocation();
 
-  const retrieveRestaurants = (restaurantLocation: string) => {
+  const retrieveRestaurants = (loc: string) => {
     setIsLoading(true);
     setRestaurants([]);
-    setTimeout(() => {
-      restaurantsRequest(restaurantLocation)
-        .then(restaurantsTransform)
-        .then((results) => {
-          setIsLoading(false);
-          setRestaurants(results);
-        })
-        .catch((err) => {
-          setIsLoading(false);
-          setError(err);
-        });
-    }, 2000);
+
+    restaurantsRequest(loc)
+      .then(restaurantsTransform)
+      .then((results) => {
+        setError("");
+        setIsLoading(false);
+        setRestaurants(results);
+      })
+      .catch((err) => {
+        setRestaurants([]);
+        setIsLoading(false);
+        setError(err);
+      });
   };
 
   useEffect(() => {
@@ -64,3 +64,15 @@ export const RestaurantsContextProvider = ({
     </RestaurantsContext.Provider>
   );
 };
+
+export function useRestaurants(): RestaurantsContextData {
+  const context = useContext(RestaurantsContext);
+
+  if (!context) {
+    throw new Error(
+      "useRestaurants must be used within an RestaurantsProvider"
+    );
+  }
+
+  return context;
+}

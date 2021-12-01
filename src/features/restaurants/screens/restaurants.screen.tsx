@@ -1,44 +1,70 @@
-import React, { useContext, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { TouchableOpacity } from "react-native";
-import styled from "styled-components/native";
-import { ActivityIndicator, Colors } from "react-native-paper";
+import { StackNavigationProp } from "@react-navigation/stack";
 
-import { FadeInView } from "../../../components/animations/fade.animation";
-import { SafeArea } from "../../../components/utility/safe-area.component";
-import { Spacer } from "../../../components/spacer/spacer.component";
-import { FavouritesBar } from "../../../components/favourites/favourites-bar.component";
+import { RootStackParamList } from "../../../infrastructure/navigation/restaurants.navigator";
 
-import { RestaurantsContext } from "../../../services/restaurants/restaurants.context";
-import { FavouritesContext } from "../../../services/favourites/favourites.context";
+import { RestaurantProps } from "../../../services/restaurants/types";
+import { useLocation } from "../../../services/location/location.context";
+import { useRestaurants } from "../../../services/restaurants/restaurants.context";
+import { useFavorite } from "../../../services/favourites/favourites.context";
 
-import { Search } from "../components/search.component";
-import { RestaurantInfoCard } from "../components/restaurant-info-card.component";
+import RestaurantInfoCard from "../components/restaurant-info-card.component";
+import Searchbar from "../components/search.component";
 
-import { RestaurantList } from "../components/restaurant-list.styles";
+import * as S from "./restaurants.styles";
+import Text from "../../../components/typography/text.component";
+import Spacer from "../../../components/spacer/spacer.component";
+import FadeInView from "../../../components/animations/fade.animation";
+import SafeArea from "../../../components/utility/safe-area.component";
+import FavouritesBar from "../../../components/favourites/favouriteBar";
 
-const Loading = styled(ActivityIndicator)`
-  margin-left: -25px;
-`;
+type RestaurantsScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "Restaurants"
+>;
 
-const LoadingContainer = styled.View`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-`;
+type RestaurantsScreenProps = {
+  navigation: RestaurantsScreenNavigationProp;
+};
 
-export const RestaurantsScreen = ({ navigation }) => {
-  const { isLoading, restaurants } = useContext<any>(RestaurantsContext);
-  const { favourites } = useContext<any>(FavouritesContext);
-  const [isToggled, setIsToggled] = useState<boolean>(false);
+const RestaurantsScreen = ({
+  navigation,
+}: RestaurantsScreenProps): JSX.Element => {
+  const { error: locationError } = useLocation();
+  const { restaurants, isLoading, error } = useRestaurants();
+  const { favourites } = useFavorite();
+
+  const [isToggled, setIsToggled] = useState(false);
+
+  const hasError = useMemo(() => {
+    return !!error || !!locationError;
+  }, [error, locationError]);
+
+  const keyExtractor = (item: RestaurantProps) => item.placeId;
+
+  const renderItem = ({ item: restaurant }: { item: RestaurantProps }) => {
+    return (
+      <TouchableOpacity
+        onPress={() => navigation.navigate("RestaurantDetail", { restaurant })}
+      >
+        <Spacer position="bottom" size="large">
+          <FadeInView>
+            <RestaurantInfoCard restaurant={restaurant} />
+          </FadeInView>
+        </Spacer>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <SafeArea>
       {isLoading && (
-        <LoadingContainer>
-          <Loading size={50} animating={true} color={Colors.blue300} />
-        </LoadingContainer>
+        <S.LoadingContainer>
+          <S.Loading />
+        </S.LoadingContainer>
       )}
-      <Search
+      <Searchbar
         isFavouritesToggled={isToggled}
         onFavouritesToggle={() => setIsToggled(!isToggled)}
       />
@@ -48,29 +74,20 @@ export const RestaurantsScreen = ({ navigation }) => {
           onNavigate={navigation.navigate}
         />
       )}
-
-      <RestaurantList
-        data={restaurants}
-        renderItem={({ item }) => {
-          return (
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("RestaurantDetail", {
-                  restaurant: item,
-                })
-              }
-            >
-              <Spacer position="bottom" size="large">
-                <FadeInView>
-                  <RestaurantInfoCard restaurant={item} />
-                </FadeInView>
-              </Spacer>
-            </TouchableOpacity>
-          );
-        }}
-        // All keys must now be string values
-        keyExtractor={(item) => item.name.toString()}
-      />
+      {hasError && (
+        <Spacer position="left" size="large">
+          <Text variant="error">Something went wrong retrieving the data</Text>
+        </Spacer>
+      )}
+      {!hasError && (
+        <S.RestaurantList
+          data={restaurants}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
+        />
+      )}
     </SafeArea>
   );
 };
+
+export default RestaurantsScreen;

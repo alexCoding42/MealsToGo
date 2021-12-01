@@ -1,29 +1,40 @@
-import React, { useState, useContext } from "react";
+import React, { useCallback, useState } from "react";
 import { ActivityIndicator, Colors } from "react-native-paper";
-import {
-  AccountBackground,
-  AccountCover,
-  AccountContainer,
-  AuthButton,
-  AuthInput,
-  ErrorContainer,
-  Title,
-} from "../components/account.styles";
-import { Text } from "../../../components/typography/text.component";
-import { Spacer } from "../../../components/spacer/spacer.component";
-import { AuthenticationContext } from "../../../services/authentication/authentication.context";
+import { StackNavigationProp } from "@react-navigation/stack";
 
-export const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const { onLogin, error, isLoading } = useContext(AuthenticationContext);
+import { RootStackParamList } from "../../../infrastructure/navigation/account.navigator";
+import { useAuth } from "../../../services/authentication/authentication.context";
+
+import Text from "../../../components/typography/text.component";
+import Spacer from "../../../components/spacer/spacer.component";
+
+import * as S from "../components/account.styles";
+
+type LoginScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "Login"
+>;
+
+type LoginScreenProps = {
+  navigation: LoginScreenNavigationProp;
+};
+
+const LoginScreen = ({ navigation }: LoginScreenProps): JSX.Element => {
+  const { onLogin, error, isLoading } = useAuth();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = useCallback(() => {
+    onLogin(email, password);
+  }, [email, password, onLogin]);
 
   return (
-    <AccountBackground>
-      <AccountCover />
-      <Title>Meals To Go</Title>
-      <AccountContainer>
-        <AuthInput
+    <S.AccountBackground>
+      <S.AccountCover />
+      <S.Title>Meals To Go</S.Title>
+      <S.AccountContainer>
+        <S.AuthInput
           label="E-mail"
           value={email}
           textContentType="emailAddress"
@@ -32,7 +43,7 @@ export const LoginScreen = ({ navigation }) => {
           onChangeText={(u) => setEmail(u)}
         />
         <Spacer size="large">
-          <AuthInput
+          <S.AuthInput
             label="Password"
             value={password}
             textContentType="password"
@@ -41,30 +52,32 @@ export const LoginScreen = ({ navigation }) => {
             onChangeText={(p) => setPassword(p)}
           />
         </Spacer>
-        {error && (
-          <ErrorContainer size="large">
+        {!!error && (
+          <S.ErrorContainer>
             <Text variant="error">{error}</Text>
-          </ErrorContainer>
+          </S.ErrorContainer>
         )}
         <Spacer size="large">
           {!isLoading ? (
-            <AuthButton
+            <S.AuthButton
               icon="lock-open-outline"
               mode="contained"
-              onPress={() => onLogin(email, password)}
+              onPress={handleLogin}
             >
               Login
-            </AuthButton>
+            </S.AuthButton>
           ) : (
-            <ActivityIndicator animating={true} color={Colors.blue300} />
+            <ActivityIndicator animating color={Colors.blue300} />
           )}
         </Spacer>
-      </AccountContainer>
+      </S.AccountContainer>
       <Spacer size="large">
-        <AuthButton mode="contained" onPress={() => navigation.goBack()}>
+        <S.AuthButton mode="contained" onPress={() => navigation.goBack()}>
           Back
-        </AuthButton>
+        </S.AuthButton>
       </Spacer>
-    </AccountBackground>
+    </S.AccountBackground>
   );
 };
+
+export default LoginScreen;

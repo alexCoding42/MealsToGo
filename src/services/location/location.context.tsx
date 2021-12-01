@@ -1,28 +1,32 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { useState, useEffect, createContext, useContext } from "react";
 
-import { locationRequest, locationTransform } from "./location.service";
+import {
+  locationRequest,
+  locationTransform,
+  LocationProps,
+} from "./location.service";
 
-interface LocationContext {
-  location?: string;
-  keyword?: string;
-  isLoading?: boolean;
-  error?: string;
-  search?: (keyword: string) => void;
+interface LocationContextData {
+  location: LocationProps;
+  isLoading: boolean;
+  error: string;
+  search: (searchKeyword: string) => void;
+  keyword: string;
 }
 
-type LocationContextProviderProps = {
+type Props = {
   children: React.ReactNode;
 };
 
-export const LocationContext = createContext<LocationContext>({});
+const LocationContext = createContext<LocationContextData>(
+  {} as LocationContextData
+);
 
-export const LocationContextProvider = ({
-  children,
-}: LocationContextProviderProps) => {
-  const [keyword, setKeyword] = useState<string>("San Francisco");
-  const [location, setLocation] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+export const LocationProvider = ({ children }: Props): JSX.Element => {
+  const [keyword, setKeyword] = useState("San Francisco");
+  const [location, setLocation] = useState<LocationProps>({} as LocationProps);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const onSearch = (searchKeyword: string) => {
     setIsLoading(true);
@@ -37,6 +41,7 @@ export const LocationContextProvider = ({
     locationRequest(keyword.toLowerCase())
       .then(locationTransform)
       .then((result) => {
+        setError("");
         setIsLoading(false);
         setLocation(result);
       })
@@ -48,9 +53,25 @@ export const LocationContextProvider = ({
 
   return (
     <LocationContext.Provider
-      value={{ isLoading, error, location, search: onSearch, keyword }}
+      value={{
+        isLoading,
+        error,
+        location,
+        search: onSearch,
+        keyword,
+      }}
     >
       {children}
     </LocationContext.Provider>
   );
 };
+
+export function useLocation(): LocationContextData {
+  const context = useContext(LocationContext);
+
+  if (!context) {
+    throw new Error("useLocation must be used within an LocationProvider");
+  }
+
+  return context;
+}

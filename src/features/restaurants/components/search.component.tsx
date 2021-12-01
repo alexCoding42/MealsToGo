@@ -1,36 +1,40 @@
-import React, { useState, useContext, useEffect } from "react";
-import styled from "styled-components/native";
+import React, { useState, useEffect } from "react";
 import { Searchbar } from "react-native-paper";
-import { LocationContext } from "../../../services/location/location.context";
 
-const SearchContainer = styled.View`
-  padding: ${(props) => props.theme.space[3]};
-`;
+import { useLocation } from "../../../services/location/location.context";
 
-export const Search = ({ isFavouritesToggled, onFavouritesToggle }) => {
-  const { keyword, search } = useContext(LocationContext);
-  const [searchKeyword, setSearchKeyword] = useState<string>(keyword);
+import * as S from "./search.styles";
+
+type SearchProps = {
+  isFavouritesToggled: boolean;
+  onFavouritesToggle: () => void;
+};
+
+const Search = ({
+  isFavouritesToggled,
+  onFavouritesToggle,
+}: SearchProps): JSX.Element => {
+  const { keyword, search } = useLocation();
+  const [searchKeyword, setSearchKeyword] = useState(keyword);
 
   useEffect(() => {
     setSearchKeyword(keyword);
-  }, [keyword]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
-    <SearchContainer>
+    <S.SearchContainer>
       <Searchbar
         icon={isFavouritesToggled ? "heart" : "heart-outline"}
         onIconPress={onFavouritesToggle}
         placeholder="Search for a location"
         value={searchKeyword}
-        onSubmitEditing={() => {
-          search(searchKeyword);
-        }}
-        onChangeText={(text) => {
-          if (!text.length) {
-          }
-          setSearchKeyword(text);
-        }}
+        onSubmitEditing={() => search(searchKeyword)}
+        onChangeText={setSearchKeyword}
       />
-    </SearchContainer>
+    </S.SearchContainer>
   );
 };
+
+export default Search;

@@ -1,20 +1,51 @@
-// @ts-ignore
 import camelize from "camelize";
-import { ILocation } from "../../interfaces";
+import { host, isMock } from "../../utils/env";
 
-import { locations } from "./locations.mock";
-
-export const locationRequest = (searchTerm: string) => {
-  return new Promise((resolve, reject) => {
-    const locationMock = locations[searchTerm];
-    if (!locationMock) {
-      reject("not found");
-    }
-    resolve(locationMock);
-  });
+type LocationReq = {
+  results: {
+    geometry: {
+      location: {
+        lng: number;
+        lat: number;
+      };
+      viewport: {
+        northeast: {
+          lat: number;
+          lng: number;
+        };
+        southwest: {
+          lat: number;
+          lng: number;
+        };
+      };
+    };
+  }[];
 };
 
-export const locationTransform = (result: ILocation | unknown) => {
+export type LocationProps = {
+  lat: number;
+  lng: number;
+  viewport: {
+    northeast: {
+      lat: number;
+      lng: number;
+    };
+    southwest: {
+      lat: number;
+      lng: number;
+    };
+  };
+};
+
+export const locationRequest = async (
+  searchTerm: string
+): Promise<LocationReq> => {
+  const url = `${host}/geocode?city=${searchTerm}&mock=${isMock}`;
+  const res = await fetch(url);
+  return res.json();
+};
+
+export const locationTransform = (result: LocationReq): LocationProps => {
   const formattedResponse = camelize(result);
   const { geometry = {} } = formattedResponse.results[0];
   const { lat, lng } = geometry.location;

@@ -1,22 +1,39 @@
-import React, { useState, createContext } from "react";
-import * as firebase from "firebase";
+import React, { useState, createContext, useCallback, useContext } from "react";
+import firebase, { User, auth } from "firebase";
 
 import { loginRequest } from "./authentication.service";
 
-interface AuthenticationContext {}
+export type UserProps = User | auth.UserCredential;
 
-type AuthenticationContextProviderProps = {
+type AuthenticationContextData = {
+  isAuthenticated: boolean;
+  user: UserProps;
+  isLoading: boolean;
+  error: string;
+  onLogin: (email: string, password: string) => void;
+  onLogout: () => void;
+  onRegister: (
+    email: string,
+    password: string,
+    repeatedPassword: string
+  ) => void;
+};
+
+type AuthenticationProviderProps = {
   children: React.ReactNode;
 };
 
-export const AuthenticationContext = createContext<AuthenticationContext>({});
+const AuthenticationContext = createContext<AuthenticationContextData>(
+  {} as AuthenticationContextData
+);
 
-export const AuthenticationContextProvider = ({
+export const AuthenticationProvider = ({
   children,
-}: AuthenticationContextProviderProps) => {
+}: AuthenticationProviderProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [user, setUser] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState("");
+
+  const [user, setUser] = useState<UserProps>({} as UserProps);
 
   firebase.auth().onAuthStateChanged((usr) => {
     if (usr) {
@@ -27,25 +44,25 @@ export const AuthenticationContextProvider = ({
     }
   });
 
-  const onLogin = (email: string, password: string) => {
+  const onLogin = useCallback((email: string, password: string): void => {
     setIsLoading(true);
     loginRequest(email, password)
       .then((u) => {
         setUser(u);
+        setError("");
         setIsLoading(false);
       })
       .catch((e) => {
         setIsLoading(false);
         setError(e.toString());
       });
-  };
+  }, []);
 
   const onRegister = (
     email: string,
     password: string,
     repeatedPassword: string
-  ) => {
-    setIsLoading(true);
+  ): void => {
     if (password !== repeatedPassword) {
       setError("Error: Passwords do not match");
       return;
@@ -55,6 +72,7 @@ export const AuthenticationContextProvider = ({
       .createUserWithEmailAndPassword(email, password)
       .then((u) => {
         setUser(u);
+        setError("");
         setIsLoading(false);
       })
       .catch((e) => {
@@ -68,8 +86,8 @@ export const AuthenticationContextProvider = ({
       .auth()
       .signOut()
       .then(() => {
-        setUser(null);
-        setError(null);
+        setUser({} as UserProps);
+        setError("");
       });
   };
 
@@ -89,3 +107,13 @@ export const AuthenticationContextProvider = ({
     </AuthenticationContext.Provider>
   );
 };
+
+export function useAuth(): AuthenticationContextData {
+  const context = useContext(AuthenticationContext);
+
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthenticationProvider");
+  }
+
+  return context;
+}

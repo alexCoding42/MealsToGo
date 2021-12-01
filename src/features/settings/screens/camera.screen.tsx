@@ -1,25 +1,33 @@
-import React, { useRef, useState, useEffect, useContext } from "react";
-import { Camera } from "expo-camera";
-import styled from "styled-components/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import React, { useRef, useState, useEffect } from "react";
 import { View, TouchableOpacity } from "react-native";
-import { Text } from "../../../components/typography/text.component";
+import { Camera } from "expo-camera";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { StackNavigationProp } from "@react-navigation/stack";
 
-import { AuthenticationContext } from "../../../services/authentication/authentication.context";
+import * as S from "./camera.styles";
 
-const ProfileCamera = styled(Camera)`
-  width: 100%;
-  height: 100%;
-`;
+import { useAuth } from "../../../services/authentication/authentication.context";
+import { RootStackParamList } from "../../../infrastructure/navigation/settings.navigator";
+import Text from "../../../components/typography/text.component";
 
-export const CameraScreen = ({ navigation }) => {
-  const [hasPermission, setHasPermission] = useState(null);
-  const cameraRef = useRef();
-  const { user } = useContext(AuthenticationContext);
+type SettingsScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "Camera"
+>;
+
+type SettingsScreenProps = {
+  navigation: SettingsScreenNavigationProp;
+};
+
+const CameraScreen = ({ navigation }: SettingsScreenProps): JSX.Element => {
+  const { user } = useAuth();
+
+  const cameraRef = useRef<Camera | null>(null);
+
+  const [hasPermission, setHasPermission] = useState(false);
 
   const snap = async () => {
-    if (cameraRef) {
+    if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
       AsyncStorage.setItem(`${user.uid}-photo`, photo.uri);
       navigation.goBack();
@@ -28,7 +36,7 @@ export const CameraScreen = ({ navigation }) => {
 
   useEffect(() => {
     (async () => {
-      const { status } = await Camera.requestPermissionsAsync();
+      const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === "granted");
     })();
   }, []);
@@ -40,11 +48,17 @@ export const CameraScreen = ({ navigation }) => {
     return <Text>No access to camera</Text>;
   }
   return (
-    <TouchableOpacity onPress={snap}>
-      <ProfileCamera
-        ref={(camera) => (cameraRef.current = camera)}
-        type={Camera.Constants.Type.front}
-      />
-    </TouchableOpacity>
+    <S.ProfileCamera
+      ref={(camera: Camera) => {
+        cameraRef.current = camera;
+      }}
+      type={Camera.Constants.Type.front}
+    >
+      <TouchableOpacity onPress={snap}>
+        <S.InnerSnap />
+      </TouchableOpacity>
+    </S.ProfileCamera>
   );
 };
+
+export default CameraScreen;
