@@ -33,7 +33,7 @@ export const AuthenticationProvider = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const [user, setUser] = useState<UserProps>({} as UserProps);
+  const [user, setUser] = useState<UserProps | null>(null);
 
   firebase.auth().onAuthStateChanged((usr) => {
     if (usr) {
@@ -95,7 +95,7 @@ export const AuthenticationProvider = ({
     <AuthenticationContext.Provider
       value={{
         isAuthenticated: !!user,
-        user,
+        user: user || ({} as UserProps),
         isLoading,
         error,
         onLogin,
