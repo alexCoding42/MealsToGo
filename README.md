@@ -7,11 +7,11 @@ Mobile app to discover restaurants and save it as favorites
 ## How to use 
 Open the app and navigate through screens, you can search restaurants in limited areas and pinned them
 
-Download the app
+## Download the app
 The project uses old Expo. The builds are available on demand, just ask me.
 
-Database
+## Database
 Firebase
 
-Technical Stack
+## Technical Stack
 This project was built using React native and Expo 100%, Typescript, Firebase.
