@@ -4,12 +4,14 @@
 ## Description
 Mobile app to discover restaurants and save it as favorites
 
-## Installation
-The project is built with Expo so the installation is simple
+## How to use 
+Open the app and navigate through screens, you can search restaurants in limited areas and pinned them
 
-Clone this repo and at the root run
-`yarn`
+Download the app
+The project uses old Expo. The builds are available on demand, just ask me.
 
-This will install all dependencies
+Database
+Firebase
 
-Then you can run `yarn start` to launch the application and you should be able to choose your simulator or open it in a real device
+Technical Stack
+This project was built using React native and Expo 100%, Typescript, Firebase.
